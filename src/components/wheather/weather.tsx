@@ -28,7 +28,7 @@ async function handleSearch() {
   setLoading(true);
 
   try {
-    const data = await getWeatherData(search); // اصلاح املای تابع
+    const data = await getWeatherData(search); 
 
     setTimeout(() => {
       if (!data) {
@@ -139,7 +139,7 @@ async function handleSearch() {
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center backdrop-blur-md bg-white/30">
           <img
-            src="src/assets/Animation - 1740389580545.gif"
+            src="/assets/img/Animation - 1740389580545.gif"
             alt="loading"
             className="w-96 h-96"
           />
