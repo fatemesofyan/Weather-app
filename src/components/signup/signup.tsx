@@ -1,7 +1,7 @@
 
-// export default function Signup() {
-//   return (
-//     <div>Signup</div>
-//   )
-// }
+export default function Signup() {
+  return (
+    <div>Signup</div>
+  )
+}
 
