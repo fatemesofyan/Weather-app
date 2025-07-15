@@ -50,7 +50,7 @@ export interface Weather {
     sunset: number;
   }
   
- export const getWeathweData=async(searchCity: string)=>{
+ export const getWeatherData=async(searchCity: string)=>{
     try {
         const response = await fetch(`${BASE_URL_WEATHER}?q=${searchCity}&units=metric&appid=${API_KEY_WEATHER}`)
 

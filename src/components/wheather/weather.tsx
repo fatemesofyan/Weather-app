@@ -4,7 +4,7 @@ import { FaTemperatureArrowDown, FaTemperatureArrowUp, FaWind } from "react-icon
 import { GiWhirlwind } from "react-icons/gi";
 import { RiDeleteBinFill } from "react-icons/ri";
 
-import { getWeathweData } from "../../apis/getweather";
+import { getWeatherData} from "../../apis/getweather";
 import "../../App.css";
 import { RecentSearch, WeatherData } from "../../interface/weatherTypes";
 
@@ -17,48 +17,57 @@ function Weather() {
   const [favorites, setFavorites] = useState<WeatherData[]>([]);
   const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
 
-  async function handleSearch() {
-    if (!search.trim()) {
-      setError("Please enter a city name");
-      return;
-    }
 
-    setError("");
-    setLoading(true);
-
-    try {
-      const data = await getWeathweData(search);
-
-      setTimeout(() => {
-        if (data.cod === 200) {
-          setWeatherData(data);
-          setSearch("");
-
-          const newSearch: RecentSearch = {
-            name: data.name,
-            country: data.sys.country,
-            temp: data.main.temp,
-            icon: data.weather[0].icon,
-          };
-
-          const updatedSearches = [newSearch, ...recentSearches].slice(0, 5);
-          setRecentSearches(updatedSearches);
-          localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
-        } else if (data.cod === "404") {
-          setError("City not found");
-          setWeatherData(null);
-        } else {
-          setError("No weather data found.");
-          setWeatherData(null);
-        }
-        setLoading(false);
-      }, 5000);
-    } catch (error) {
-      console.error("Error fetching weather data:", error);
-      setError("Failed to fetch data");
-      setLoading(false);
-    }
+async function handleSearch() {
+  if (!search.trim()) {
+    setError("Please enter a city name");
+    return;
   }
+
+  setError("");
+  setLoading(true);
+
+  try {
+    const data = await getWeatherData(search); // اصلاح املای تابع
+
+    setTimeout(() => {
+      if (!data) {
+        setError("No data returned from API.");
+        setLoading(false);
+        return;
+      }
+
+      if (String(data.cod) === "200") {
+        setWeatherData(data);
+        setSearch("");
+
+        const newSearch: RecentSearch = {
+          name: data.name,
+          country: data.sys.country,
+          temp: data.main.temp,
+          icon: data.weather?.[0]?.icon ?? "",
+        };
+
+        const updatedSearches = [newSearch, ...recentSearches].slice(0, 5);
+        setRecentSearches(updatedSearches);
+        localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
+      } else if (String(data.cod) === "404") {
+        setError("City not found");
+        setWeatherData(null);
+      } else {
+        setError("No weather data found.");
+        setWeatherData(null);
+      }
+
+      setLoading(false);
+    }, 5000); 
+  } catch (error) {
+    console.error("Error fetching weather data:", error);
+    setError("Failed to fetch data");
+    setLoading(false);
+  }
+}
+
 
   useEffect(() => {
     const savedSearches = localStorage.getItem("recentSearches");
